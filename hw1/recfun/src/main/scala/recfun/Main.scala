@@ -21,7 +21,18 @@ object Main {
   /**
    * Exercise 2
    */
-    def balance(chars: List[Char]): Boolean = ???
+    def balance(chars: List[Char]): Boolean = {
+      def balance_helper(num: Int,remain: List[Char]): Boolean ={
+        if (num==0 && remain.isEmpty) true
+        else if(num!=0 && remain.isEmpty) false
+        else{
+          if(remain.head == '(') balance_helper(num + 1,remain.tail)
+          else if(remain.head ==')') if(num<=0) false else balance_helper(num-1,remain.tail)
+          else balance_helper(num, remain.tail)
+        }
+      }
+      balance_helper(0,chars)
+    }
   
   /**
    * Exercise 3

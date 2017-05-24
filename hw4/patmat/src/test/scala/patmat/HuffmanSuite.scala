@@ -53,11 +53,27 @@ class HuffmanSuite extends FunSuite {
 
   trait TestList {
     val chars = List('a','b','a')
+    val a_leaf = Leaf('a',2)
+    val b_leaf = Leaf('b',1)
+    val leaflist = List(Leaf('e', 1), Leaf('t', 2), Leaf('x', 4))
   }
   test("times"){
     new TestList {
+
       assert(times(chars) === List(('b',1),('a',2)))
     }
   }
+  test("combine"){
+    new TestList {
 
+      assert(combine(List(a_leaf,b_leaf)) === List(Fork(a_leaf,b_leaf,List('a','b'),3)))
+      //
+    }
+
+  }
+  test("create"){
+    new TestList {
+      //println(createCodeTree(chars))
+    }
+  }
 }

@@ -112,9 +112,10 @@ object Huffman {
       * unchanged.
       */
     def combine(trees: List[CodeTree]): List[CodeTree] = trees match{
-        case List(t1: Leaf,t2: Leaf,ts) => List(Fork(t1,t2,List(t1.char,t2.char),t1.weight+t2.weight),ts)
-        case List(t1: Leaf,t2: Fork,ts) => List(Fork(t1,t2,t1.char::t2.chars,t1.weight+t2.weight),ts)
-        case List(t1: Fork,t2: Fork,ts) => List(Fork(t1,t2,t1.chars:::t2.chars,t1.weight+t2.weight),ts)
+        //case List(t1: Leaf,t2: Leaf,ts) => List(Fork(t1,t2,List(t1.char,t2.char),t1.weight+t2.weight),ts)
+        case (t1:Leaf) :: (t2:Leaf) :: ts => Fork(t1,t2,List(t1.char,t2.char),t1.weight+t2.weight)::ts
+        case (t1:Leaf) :: (t2:Fork) :: ts => Fork(t1,t2,t1.char::t2.chars,t1.weight+t2.weight)::ts
+        case (t1:Fork) :: (t2:Fork) :: ts => Fork(t1,t2,t1.chars:::t2.chars,t1.weight+t2.weight)::ts
         case x => x
     }
 
@@ -135,7 +136,16 @@ object Huffman {
       *    the example invocation. Also define the return type of the `until` function.
       *  - try to find sensible parameter names for `xxx`, `yyy` and `zzz`.
       */
-    def until(xxx: ???, yyy: ???)(zzz: ???): ??? = ???
+    def until(singleton: List[CodeTree] => Boolean, combine: List[CodeTree] => List[CodeTree])(trees: List[CodeTree])
+    : List[CodeTree] = {
+        def helper(t: List[CodeTree]):List[CodeTree] = {
+            //println(t)
+            if(singleton(t)) t
+            else helper(combine(t))
+        }
+        println(helper(trees))
+        helper(trees)
+    }
 
     /**
       * This function creates a code tree which is optimal to encode the text `chars`.
@@ -143,7 +153,10 @@ object Huffman {
       * The parameter `chars` is an arbitrary text. This function extracts the character
       * frequencies from that text and creates a code tree based on them.
       */
-    def createCodeTree(chars: List[Char]): CodeTree = ???
+    def createCodeTree(chars: List[Char]): CodeTree = {
+        val sorted_leaf = makeOrderedLeafList(times(chars))
+        until(singleton,combine)(sorted_leaf).head
+    }
 
 
     // Part 3: Decoding
